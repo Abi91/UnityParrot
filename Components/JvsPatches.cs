@@ -101,11 +101,11 @@ namespace UnityParrot.Components
                         break;
                     case JvsButtonID.LeftMenu:
                         // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
-                        __result = (StateRaw.DPad.Up == ButtonState.Pressed);
+                        __result = (StateRaw.Buttons.Back == ButtonState.Pressed);
                         break;
                     case JvsButtonID.RightMenu:
                         // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
-                        __result = (StateRaw.Buttons.Y == ButtonState.Pressed);
+                        __result = (StateRaw.Buttons.Start == ButtonState.Pressed);
                         break;
                     case JvsButtonID.Right1:
                         // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
@@ -166,11 +166,11 @@ namespace UnityParrot.Components
                     break;
                 case JvsButtonID.LeftMenu:
                     // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
-                    __result = ((StateOn.DPad.Up == ButtonState.Pressed) && (LastStateOn.DPad.Up == ButtonState.Released));
+                    __result = ((StateOn.Buttons.Back == ButtonState.Pressed) && (LastStateOn.DPad.Up == ButtonState.Released));
                     break;
                 case JvsButtonID.RightMenu:
                     // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
-                    __result = ((StateOn.Buttons.Y == ButtonState.Pressed) && (LastStateOn.Buttons.Y == ButtonState.Released));
+                    __result = ((StateOn.Buttons.Start == ButtonState.Pressed) && (LastStateOn.Buttons.Y == ButtonState.Released));
                     break;
                 case JvsButtonID.Right1:
                     // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
@@ -234,11 +234,11 @@ namespace UnityParrot.Components
                     break;
                 case JvsButtonID.LeftMenu:
                     // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
-                    __result = ((StateOff.DPad.Up == ButtonState.Released) && (LastStateOff.DPad.Up == ButtonState.Pressed));
+                    __result = ((StateOff.Buttons.Back == ButtonState.Released) && (LastStateOff.DPad.Up == ButtonState.Pressed));
                     break;
                 case JvsButtonID.RightMenu:
                     // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
-                    __result = ((StateOff.Buttons.Y == ButtonState.Released) && (LastStateOff.Buttons.Y == ButtonState.Pressed));
+                    __result = ((StateOff.Buttons.Start == ButtonState.Released) && (LastStateOff.Buttons.Y == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Right1:
                     // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
