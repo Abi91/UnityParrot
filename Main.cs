@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace UnityParrot
 {
+    //Main Entry Point
     public class Main
     {
         public static Components.XInputHandler InputHandler;
