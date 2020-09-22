@@ -1,29 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>net3.5</TargetFramework>
     <DebugType>portable</DebugType>
     <TargetName>UnityParrot</TargetName>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>C:\Users\Abi91\source\repos\UnityParrot\Backup3\</UpgradeBackupLocation>
+    <OldToolsVersion>Current</OldToolsVersion>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Lib.Harmony" Version="1.2.0.1" />
-
     <Reference Include="Assembly-CSharp">
       <HintPath>..\package\mu3_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-
     <Reference Include="AMDaemon.NET">
       <HintPath>..\package\mu3_Data\Managed\AMDaemon.NET.dll</HintPath>
     </Reference>
-
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\package\mu3_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-
     <Reference Include="UnityEngine">
       <HintPath>..\package\mu3_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="XInputDotNetPure">
+      <HintPath>..\package\mu3_Data\Managed\XInputDotNetPure.dll</HintPath>
+    </Reference>
   </ItemGroup>
-
 </Project>

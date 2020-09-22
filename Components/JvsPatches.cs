@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using NekoClient.Logging;
+using System.IO;
+using XInputDotNetPure;
+
 
 namespace UnityParrot.Components
 {
@@ -41,9 +44,14 @@ namespace UnityParrot.Components
         static float limitBuffer = 0.7f;
         static float lastAnalog = 0.0f;
 
+        static XInputHandler XHandler;
+
+
         [MethodPatch(PatchType.Prefix, typeof(Jvs), "initialize")]
         private static bool initialize()
         {
+            XHandler = Main.InputHandler;
+
             if (SettingsManager.instance.settings.AnalogRotateAxis)
             {
                 analogRange = (float)Screen.height / 2.0f;
@@ -57,13 +65,82 @@ namespace UnityParrot.Components
         [MethodPatch(PatchType.Prefix, typeof(Jvs), "getRawState")]
         private static bool getRawState(ref bool __result, JvsButtonID __0)
         {
+                GamePadState StateRaw = XHandler.CurrentState;
+                
+                switch (__0)
+                {
+                    case JvsButtonID.Begin:
+                        __result = Input.GetKey(SettingsManager.instance.settings.ButtonBegin);
+                        //__result = (StateRaw.Buttons.Start == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Service:
+                         __result = Input.GetKey(SettingsManager.instance.settings.ButtonService);
+                        //__result = (StateRaw.Buttons.Back == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Push0:
+                        __result = Input.GetKey(SettingsManager.instance.settings.ButtonPush0);
+                        break;
+                    case JvsButtonID.Push1:
+                        __result = Input.GetKey(SettingsManager.instance.settings.ButtonPush1);
+                        break;
+                    case JvsButtonID.LeftWall:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftWall);
+                        __result = (StateRaw.Buttons.LeftShoulder == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Left1:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft1);
+                        __result = (StateRaw.DPad.Left == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Left2:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft2);
+                        __result = (StateRaw.DPad.Down == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Left3:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft3);
+                        __result = (StateRaw.DPad.Right == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.LeftMenu:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
+                        __result = (StateRaw.DPad.Up == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.RightMenu:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
+                        __result = (StateRaw.Buttons.Y == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Right1:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
+                        __result = (StateRaw.Buttons.X == ButtonState.Pressed); 
+                        break;
+                    case JvsButtonID.Right2:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight2);
+                        __result = (StateRaw.Buttons.A == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.Right3:
+                        //__result = Input.GetKey(SettingsManager.instance.settings.ButtonRight3);
+                        __result = (StateRaw.Buttons.B == ButtonState.Pressed);
+                        break;
+                    case JvsButtonID.RightWall:
+                        // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightWall);
+                        __result = (StateRaw.Buttons.RightShoulder == ButtonState.Pressed);
+                        break;
+                }
+            return false;
+        }
+
+        [MethodPatch(PatchType.Prefix, typeof(Jvs), "getTriggerOn")]
+        private static bool getTriggerOn(ref bool __result, JvsButtonID __0)
+        {
+            GamePadState StateOn = XHandler.CurrentState;
+            GamePadState LastStateOn = XHandler.LastState;
             switch (__0)
             {
                 case JvsButtonID.Begin:
                     __result = Input.GetKey(SettingsManager.instance.settings.ButtonBegin);
+                    //__result = ((StateOn.Buttons.Start == ButtonState.Pressed) && (LastStateOn.Buttons.Start == ButtonState.Released));             
                     break;
                 case JvsButtonID.Service:
                     __result = Input.GetKey(SettingsManager.instance.settings.ButtonService);
+                    //__result = ((StateOn.Buttons.Back == ButtonState.Pressed) && (LastStateOn.Buttons.Back == ButtonState.Released));
                     break;
                 case JvsButtonID.Push0:
                     __result = Input.GetKey(SettingsManager.instance.settings.ButtonPush0);
@@ -72,141 +149,114 @@ namespace UnityParrot.Components
                     __result = Input.GetKey(SettingsManager.instance.settings.ButtonPush1);
                     break;
                 case JvsButtonID.LeftWall:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftWall);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftWall);
+                    __result = ((StateOn.Buttons.LeftShoulder == ButtonState.Pressed) && (LastStateOn.Buttons.LeftShoulder == ButtonState.Released));
                     break;
                 case JvsButtonID.Left1:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft1);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft1);
+                    __result = ((StateOn.DPad.Left == ButtonState.Pressed) && (LastStateOn.DPad.Left == ButtonState.Released));
                     break;
                 case JvsButtonID.Left2:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft2);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft2);
+                    __result = ((StateOn.DPad.Down == ButtonState.Pressed) && (LastStateOn.DPad.Down == ButtonState.Released));
                     break;
                 case JvsButtonID.Left3:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft3);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft3);
+                    __result = ((StateOn.DPad.Right == ButtonState.Pressed) && (LastStateOn.DPad.Right == ButtonState.Released));
                     break;
                 case JvsButtonID.LeftMenu:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
+                    __result = ((StateOn.DPad.Up == ButtonState.Pressed) && (LastStateOn.DPad.Up == ButtonState.Released));
                     break;
                 case JvsButtonID.RightMenu:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
+                    __result = ((StateOn.Buttons.Y == ButtonState.Pressed) && (LastStateOn.Buttons.Y == ButtonState.Released));
                     break;
                 case JvsButtonID.Right1:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
+                    __result = ((StateOn.Buttons.X == ButtonState.Pressed) && (LastStateOn.Buttons.X == ButtonState.Released));
+                    //Log.Info("Right1 On: {0}", __result);
                     break;
                 case JvsButtonID.Right2:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight2);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight2);
+                    __result = ((StateOn.Buttons.A == ButtonState.Pressed) && (LastStateOn.Buttons.A == ButtonState.Released));
                     break;
                 case JvsButtonID.Right3:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight3);
+                    //__result = Input.GetKey(SettingsManager.instance.settings.ButtonRight3);
+                    __result = ((StateOn.Buttons.B == ButtonState.Pressed) && (LastStateOn.Buttons.B == ButtonState.Released));
                     break;
                 case JvsButtonID.RightWall:
-                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightWall);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightWall);
+                    __result = ((StateOn.Buttons.RightShoulder == ButtonState.Pressed) && (LastStateOn.Buttons.RightShoulder == ButtonState.Released));
                     break;
             }
-
-            return false;
-        }
-
-        [MethodPatch(PatchType.Prefix, typeof(Jvs), "getTriggerOn")]
-        private static bool getTriggerOn(ref bool __result, JvsButtonID __0)
-        {
-            switch (__0)
-            {
-                case JvsButtonID.Begin:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonBegin);
-                    break;
-                case JvsButtonID.Service:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonService);
-                    break;
-                case JvsButtonID.Push0:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonPush0);
-                    break;
-                case JvsButtonID.Push1:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonPush1);
-                    break;
-                case JvsButtonID.LeftWall:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonLeftWall);
-                    break;
-                case JvsButtonID.Left1:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonLeft1);
-                    break;
-                case JvsButtonID.Left2:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonLeft2);
-                    break;
-                case JvsButtonID.Left3:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonLeft3);
-                    break;
-                case JvsButtonID.LeftMenu:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonLeftMenu);
-                    break;
-                case JvsButtonID.RightMenu:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonRightMenu);
-                    break;
-                case JvsButtonID.Right1:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonRight1);
-                    break;
-                case JvsButtonID.Right2:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonRight2);
-                    break;
-                case JvsButtonID.Right3:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonRight3);
-                    break;
-                case JvsButtonID.RightWall:
-                    __result = Input.GetKeyDown(SettingsManager.instance.settings.ButtonRightWall);
-                    break;
-            }
-
+            
             return false;
         }
 
         [MethodPatch(PatchType.Prefix, typeof(Jvs), "getTriggerOff")]
         private static bool getTriggerOff(ref bool __result, JvsButtonID __0)
         {
+            GamePadState StateOff = XHandler.CurrentState;
+            GamePadState LastStateOff = XHandler.LastState;
             switch (__0)
             {
                 case JvsButtonID.Begin:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonBegin);
+                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonBegin);
+                    //__result = ((StateOff.Buttons.Start == ButtonState.Released) && (LastStateOff.Buttons.Start == ButtonState.Pressed));
+
                     break;
                 case JvsButtonID.Service:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonService);
+                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonService);
+                    //__result = ((StateOff.Buttons.Back == ButtonState.Released) && (LastStateOff.Buttons.Back == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Push0:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonPush0);
+                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonPush0);
                     break;
                 case JvsButtonID.Push1:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonPush1);
+                    __result = Input.GetKey(SettingsManager.instance.settings.ButtonPush1);
                     break;
                 case JvsButtonID.LeftWall:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonLeftWall);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftWall);
+                    __result = ((StateOff.Buttons.LeftShoulder == ButtonState.Released) && (LastStateOff.Buttons.LeftShoulder == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Left1:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonLeft1);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft1);
+                    __result = ((StateOff.DPad.Left == ButtonState.Released) && (LastStateOff.DPad.Left == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Left2:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonLeft2);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft2);
+                    __result = ((StateOff.DPad.Down == ButtonState.Released) && (LastStateOff.DPad.Down == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Left3:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonLeft3);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeft3);
+                    __result = ((StateOff.DPad.Right == ButtonState.Released) && (LastStateOff.DPad.Right == ButtonState.Pressed));
                     break;
                 case JvsButtonID.LeftMenu:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonLeftMenu);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonLeftMenu);
+                    __result = ((StateOff.DPad.Up == ButtonState.Released) && (LastStateOff.DPad.Up == ButtonState.Pressed));
                     break;
                 case JvsButtonID.RightMenu:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonRightMenu);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightMenu);
+                    __result = ((StateOff.Buttons.Y == ButtonState.Released) && (LastStateOff.Buttons.Y == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Right1:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonRight1);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight1);
+                    __result = ((StateOff.Buttons.X == ButtonState.Released) && (LastStateOff.Buttons.X == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Right2:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonRight2);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRight2);
+                    __result = ((StateOff.Buttons.A == ButtonState.Released) && (LastStateOff.Buttons.A == ButtonState.Pressed));
                     break;
                 case JvsButtonID.Right3:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonRight3);
+                    //__result = Input.GetKey(SettingsManager.instance.settings.ButtonRight3);
+                    __result = ((StateOff.Buttons.B == ButtonState.Released) && (LastStateOff.Buttons.B == ButtonState.Pressed));
                     break;
                 case JvsButtonID.RightWall:
-                    __result = Input.GetKeyUp(SettingsManager.instance.settings.ButtonRightWall);
+                    // __result = Input.GetKey(SettingsManager.instance.settings.ButtonRightWall);
+                    __result = ((StateOff.Buttons.RightShoulder == ButtonState.Released) && (LastStateOff.Buttons.RightShoulder == ButtonState.Pressed));
                     break;
             }
-
             return false;
         }
 
@@ -215,6 +265,7 @@ namespace UnityParrot.Components
         [MethodPatch(PatchType.Prefix, typeof(Jvs), "getAnalog")]
         private static bool getAnalog(ref float __result)
         {
+            GamePadState state = GamePad.GetState(PlayerIndex.One);
             if (SettingsManager.instance.settings.AnalogControlStyle == AnalogControlStyle.Touchpad.ToString())
             {
                 if (Input.touchCount > 0)
@@ -227,8 +278,12 @@ namespace UnityParrot.Components
                     __result = lastAnalog;
                 }
             }
-            else if (SettingsManager.instance.settings.AnalogControlStyle == AnalogControlStyle.Mouse.ToString())
+            else if (state.IsConnected)
             {
+                __result = state.ThumbSticks.Left.X;
+            }
+            else if (SettingsManager.instance.settings.AnalogControlStyle == AnalogControlStyle.Mouse.ToString())
+            {               
                 Vector3 mouse = Input.mousePosition;
                 __result = SettingsManager.instance.settings.AnalogRotateAxis ? mouse.y : mouse.x;
                 __result = (__result - analogRange) / (analogRange * limitBuffer);

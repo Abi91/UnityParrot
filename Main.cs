@@ -9,8 +9,10 @@ using UnityEngine;
 
 namespace UnityParrot
 {
-    class Main
+    public class Main
     {
+        public static Components.XInputHandler InputHandler;
+
         static void InitPatches()
         {
             Components.OperationManagerPatches.Patch();
@@ -47,6 +49,7 @@ namespace UnityParrot
 
                 GameObject mainObject = new GameObject();
 
+                InputHandler = mainObject.AddComponent<Components.XInputHandler>();
                 mainObject.AddComponent<Components.SettingsManager>();
                 mainObject.AddComponent<Components.AimePatches>();
                 mainObject.AddComponent<Components.PacketPatches>();

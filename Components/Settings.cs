@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using NekoClient.Logging;
 using MU3.Util;
+using XInputDotNetPure;
+
 
 namespace UnityParrot.Components
 {
