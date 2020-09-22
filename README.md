@@ -1,28 +1,33 @@
 # UnityParrot - XInput Handler
-This fork uses the DirectX API by speps: https://github.com/speps/XInputDotNet
 
-It allows the usage of controllers that use DirectX, for example the Xbox 360 Controller.
+
+This fork allows the usage of controllers for Ongeki. 
+The Contoller has to use DirectX for example the Xbox 360 Controller.
 While the mouse isn't being used, the keyboard is used to scan the Aime card (F2). 
+
+This fork uses the DirectX API by speps: https://github.com/speps/XInputDotNet
 
 # Controls:
 
-Left Wall: Left Bumper
+Movement:   Left Analog Stick
+
+Left Wall:  Left Bumper
 
 Right Wall: Right Bumper
 
-Left1 : Dpad Left
+Left1 :     Dpad Left
 
-Left2 : Dpad Down
+Left2 :     Dpad Down
 
-Left3 : Dpad Right
+Left3 :     Dpad Right
 
-Right1: X
+Right1:     X
 
-Right2: A
+Right2:     A
 
-Right3: B
+Right3:     B
 
-Left Menu: Select
+Left Menu:  Select
 
 Right Menu: Start
 
